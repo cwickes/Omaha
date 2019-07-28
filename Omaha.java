@@ -2,6 +2,7 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Iterator;
+import javax.swing.JTextField;
 
 public class Omaha {
 
@@ -18,16 +19,26 @@ public class Omaha {
 
 	public static void main(String[] args) {
 
+		//DEBUG
+		GameFrame gui = new GameFrame();
+
+		
+
+		
+	}
+
+	public static void addPlayers(int numberOfPlayers, JTextField[] names, JTextField[] balances) {
 		// Add players to game
-		for(int i = 0; i < initialPlayerSize; i++) {
+		for(int i = 0; i < numberOfPlayers; i++) {
 			// Retrieve name
-			String name = "PLACEHOLDER_NAME_" + i;
+			String name = names[i].getText();
 			// Determine balance
-			int balance = 30;
+			int balance = Integer.parseInt(balances[i].getText());
 			players.add(new Player(name, balance));
 		}
+	}
 
-
+	public static void startGame() {
 		/**************
 		 * GAME START *
 		 **************/
@@ -115,8 +126,6 @@ public class Omaha {
 			returnCommunityCards(5);
 
 		}
-
-		
 	}
 
 	// Go through betting round
