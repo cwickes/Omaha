@@ -3,6 +3,7 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.Iterator;
 import javax.swing.JTextField;
+import javax.swing.JFrame;
 
 public class Omaha {
 
@@ -15,14 +16,18 @@ public class Omaha {
 	static Player bigBlind, smallBlind;
 	static int pot = 0;
 	static int bet;
-	static int initialPlayerSize = 3;
+	static boolean setupComplete = false;
+
+	static GameFrame gui;
 
 	public static void main(String[] args) {
 
 		//DEBUG
-		GameFrame gui = new GameFrame();
+		gui = new GameFrame();
 
-		
+		startGame();
+
+		gui.dispose();
 
 		
 	}
@@ -36,6 +41,10 @@ public class Omaha {
 			int balance = Integer.parseInt(balances[i].getText());
 			players.add(new Player(name, balance));
 		}
+	}
+
+	public static List<Player> getPlayers() {
+		return players;
 	}
 
 	public static void startGame() {
@@ -82,6 +91,11 @@ public class Omaha {
 			bet = 10;
 
 			dealer.dealCards(players);
+			// Add cards to GUI
+			gui.gamePanel = new GameplayPanel(Omaha.getPlayers());
+			gui.add(gui.gamePanel);
+			gui.gamePanel.setupAboveBelow();
+			gui.pack();
 			
 			// Go through betting round
 			if(bettingRound(0)) {
@@ -90,6 +104,8 @@ public class Omaha {
 
 			// Deal flop
 			dealer.dealFlop(communityCards);
+			// Show flop on GUI
+			gui.gamePanel.flop(communityCards);
 
 			// Next betting round
 			if(bettingRound(3)) {
@@ -99,6 +115,7 @@ public class Omaha {
 
 			// Deal turn
 			dealer.dealTurn(communityCards);
+			gui.gamePanel.turn(communityCards);
 
 			// Next betting round
 			if(bettingRound(4)) {
@@ -108,6 +125,7 @@ public class Omaha {
 
 			// Deal river
 			dealer.dealRiver(communityCards);
+			gui.gamePanel.river(communityCards);
 
 			// Final betting round
 			if(bettingRound(5)) {
@@ -141,10 +159,15 @@ public class Omaha {
 			for(Iterator<Player> i = activePlayers.iterator(); i.hasNext();) {
 				Player p = i.next();
 
+				gui.gamePanel.markCurrentPlayer(p);
+				gui.gamePanel.updatePot();
+
 				if(activePlayers.size() == 1) {
 					p.balance += pot;
 					pot = 0;
 					giveCards();
+
+					gui.gamePanel.showWin(p.name + " wins the hand");
 
 					return true;
 				}
@@ -210,7 +233,7 @@ public class Omaha {
 				smallBlind = players.get((dealerLocation + 1) % players.size());
 			}
 			else {
-				System.out.println("WINNER");
+				gui.gamePanel.showWin(players.get(0).name + " WINS THE GAME!");
 				players.get(0).viewInfo();
 				return true;
 			}
@@ -225,7 +248,7 @@ public class Omaha {
 			bigBlind = players.get((dealerLocation + 2) % players.size());
 			}
 			else {
-				System.out.println("WINNER");
+				gui.gamePanel.showWin(players.get(0).name + " WINS THE GAME!");
 				players.get(0).viewInfo();
 				return true;
 			}
@@ -267,7 +290,7 @@ public class Omaha {
 			}
 		}
 
-		System.out.println(winner.name + " wins the hand");
+		Omaha.gui.gamePanel.showWin(winner.name + " wins the hand");
 	}
 
 	// Code taken from https://rosettacode.org/wiki/Poker_hand_analyser#Java

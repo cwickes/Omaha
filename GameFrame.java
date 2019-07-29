@@ -9,32 +9,36 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import java.awt.CardLayout;
+import javax.swing.JDialog;
+import java.awt.Color;
 
 public class GameFrame extends JFrame {
 
-	private JPanel mainPanel = new JPanel(new CardLayout());
 	private GridLayout layout = new GridLayout(12, 2);
 	private JPanel infoInputPanel;
 	private JButton resetButton, startButton;
 	private JTextField[] nameInputArray = new JTextField[10];
 	private JTextField[] balanceInputArray = new JTextField[10];
 	private int numberOfPlayers = 2;
+	protected GameplayPanel gamePanel;
+	private JDialog setupDialog;
 
 	public GameFrame() {
 		super("Omaha Poker");
+
+		setupDialog = new JDialog(this, true);
 
 		layout.setVgap(10);
 		// Create panel with 12x2 grid layout. Spaced 10 between each row
 		infoInputPanel = new JPanel(layout);
 		// Fill panel with input forms
 		setGameData();
-		mainPanel.add(infoInputPanel, "input panel");
-		add(mainPanel);
+		setupDialog.add(infoInputPanel);
 
 		// Finish setting up frame, display
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(1000, 1000);
-		setVisible(true);
+		setupDialog.pack();
+		setupDialog.setVisible(true);
 	}
 
 	// Displays GUI to collect data for game (# of players, balance, etc.)
@@ -71,6 +75,7 @@ public class GameFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if(checkForm()) {
 					startGame();
+					setupDialog.dispose();
 				}
 			}
 		});
@@ -144,9 +149,12 @@ public class GameFrame extends JFrame {
 	// Replace infoInputPanel with gamePanel
 	private void startGame() {
 		Omaha.addPlayers(numberOfPlayers, nameInputArray, balanceInputArray);
-		CardLayout cl = (CardLayout)mainPanel.getLayout();
-		mainPanel.add(new GameplayPanel(), "game panel");
-		cl.show(mainPanel, "game panel");
+		pack();
+		setVisible(true);
+	}
+
+	public void setupGame() {
+
 	}
 
 }

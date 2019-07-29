@@ -1,7 +1,7 @@
 public class Card {
 
-	private Rank rank;
-	private Suit suit;
+	protected Rank rank;
+	protected Suit suit;
 
 	// Default option. Creates a Joker card.
 	public Card() {

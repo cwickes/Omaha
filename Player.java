@@ -2,7 +2,6 @@ import java.util.Scanner;
 
 public class Player {
 	// TODO: Make Human and Computer subclass
-	// TODO: Implement betting mechanics (call, raise, fold, check)
 
 	protected String name;
 	protected int balance;
@@ -39,25 +38,16 @@ public class Player {
 
 	public int bet(int amount) {
 		balance -= amount;
-		wager = amount;
 
-		System.out.println(name + " bets " + amount);
+		wager = amount;
 
 		return amount;
 	}
 
 	public int takeTurn(Dealer dealer, int minBet, int activeCommunityCards) {
 		int choice;
-		Scanner scan = new Scanner(System.in);
 
-		viewInfo();
-		for(int i = 0; i < activeCommunityCards; i++) {
-			System.out.println("Community Cards:");
-			Omaha.communityCards[i].printCard();
-		}
-
-		System.out.print("Raise (0), call (1), or fold (2): ");
-		choice = scan.nextInt();
+		choice = Omaha.gui.gamePanel.getChoice();
 
 		switch(choice) {
 			case RAISE:
@@ -74,16 +64,19 @@ public class Player {
 	}
 
 	private void raise(int bet) {
-		int raiseAmt = 10;
+		int raiseAmt;
+
 		// Get amount to raise by
+		raiseAmt = Omaha.gui.gamePanel.getRaiseAmt();
 
 		// Check if balance can support raise AND raise amount will exceed bet
-		if(balance >= raiseAmt && wager + raiseAmt > bet) {
+		if(raiseAmt > 0 && balance >= raiseAmt && wager + raiseAmt > bet) {
 			balance -= raiseAmt;
 			Omaha.addToPot(raiseAmt);
 			wager += raiseAmt;
+			Omaha.gui.gamePanel.updateBalance(this);
 
-			System.out.println(name + " raises to " + wager);
+			Omaha.gui.gamePanel.outputMove(name + " raises to " + wager);
 		}
 		else {
 			call(bet);
@@ -95,14 +88,15 @@ public class Player {
 		balance -= bet - wager;
 		Omaha.addToPot(bet - wager);
 		wager = bet;
+		Omaha.gui.gamePanel.updateBalance(this);
 
-		System.out.println(name + " calls " + wager);
+		Omaha.gui.gamePanel.outputMove(name + " calls " + wager);
 	}
 
 	protected void fold(Dealer dealer) {
 		returnCards(dealer);
 
-		System.out.println(name + " folds");
+		Omaha.gui.gamePanel.outputMove(name + " folds");
 	}
 
 	public void returnCards(Dealer dealer) {
