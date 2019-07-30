@@ -33,6 +33,7 @@ public class GameplayPanel extends JPanel {
 	public JLabel moveMade = new JLabel("No moves made");
 	public JLabel pot = new JLabel("Pot at $0");
 	public JLabel wager = new JLabel("Wager is $0");
+	public PlayerPanel currentPlayer;
 
 	// ASSETS
 	private final String POKER_TABLE_PATH = "assets/poker_table.jpg";
@@ -96,14 +97,18 @@ public class GameplayPanel extends JPanel {
 	// Marks current players and updates balances
 	public void markCurrentPlayer(Player p) {
 		for(Component i : aboveTable.getComponents()) {
-			if(i instanceof PlayerPanel && ((PlayerPanel)i).player == p)
+			if(i instanceof PlayerPanel && ((PlayerPanel)i).player == p) {
 				((PlayerPanel)i).setBackground(Color.GREEN);
+				currentPlayer = (PlayerPanel)i;
+			}
 			else
 				((PlayerPanel)i).setBackground(null);
 		}
 		for(Component i : belowTable.getComponents()) {
-			if(i instanceof PlayerPanel && ((PlayerPanel)i).player == p)
+			if(i instanceof PlayerPanel && ((PlayerPanel)i).player == p) {
 				((PlayerPanel)i).setBackground(Color.GREEN);
+				currentPlayer = (PlayerPanel)i;
+			}
 			else
 				((PlayerPanel)i).setBackground(null);
 		}
@@ -227,12 +232,14 @@ public class GameplayPanel extends JPanel {
 		repaint();
 	}
 
-	private class PlayerPanel extends JPanel {
+	public class PlayerPanel extends JPanel {
 		private Player player;
 		private JLabel playerName, playerBalance, playerWager;
 		private JLabel[] cards = new JLabel[4];
 		private JLabel chip;
 		private JPanel hand = new JPanel();
+		private JPanel hideHand = new JPanel();
+		private JPanel handPanel = new JPanel();
 
 		private final String CARD_PATH = "assets/poker_cards_chips_2d/PNGs/cards/Set_B/small/card_b_";
 
@@ -245,8 +252,28 @@ public class GameplayPanel extends JPanel {
 			super();
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			hand.setLayout(new BoxLayout(hand, BoxLayout.X_AXIS));
+			hideHand.setLayout(new BoxLayout(hideHand, BoxLayout.X_AXIS));
+
+			java.net.URL imgURL = getClass().getResource("assets/poker_cards_chips_2d/PNGs/decks/small/deck_3.png");
+			ImageIcon card = new ImageIcon(imgURL);
+			for(int i = 0; i < 4; i++) {
+				hideHand.add(new JLabel(card));
+			}
 
 			addPlayer(player);
+
+			hideHand();
+		}
+
+		public void hideHand() {
+			handPanel.removeAll();
+			handPanel.add(hideHand);
+		}
+
+		public void showHand() {
+			JOptionPane.showMessageDialog(Omaha.gui, "Click OK to view hand");
+			handPanel.removeAll();
+			handPanel.add(hand);
 		}
 
 		public void addPlayer(Player player) {
@@ -259,7 +286,7 @@ public class GameplayPanel extends JPanel {
 			add(playerName);
 			add(playerBalance);
 			add(playerWager);
-			add(hand);
+			add(handPanel);
 
 			addCards();
 		}

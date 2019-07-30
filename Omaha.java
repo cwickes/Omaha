@@ -93,6 +93,7 @@ public class Omaha {
 			dealer.dealCards(players);
 			// Add cards to GUI
 			gui.gamePanel = new GameplayPanel(Omaha.getPlayers());
+			gui.getContentPane().removeAll();
 			gui.add(gui.gamePanel);
 			gui.gamePanel.setupAboveBelow();
 			gui.pack();
@@ -159,8 +160,13 @@ public class Omaha {
 			for(Iterator<Player> i = activePlayers.iterator(); i.hasNext();) {
 				Player p = i.next();
 
+				if(gui.gamePanel.currentPlayer != null)
+					gui.gamePanel.currentPlayer.hideHand();
 				gui.gamePanel.markCurrentPlayer(p);
 				gui.gamePanel.updatePot();
+				gui.gamePanel.currentPlayer.showHand();
+				gui.revalidate();
+				gui.repaint();
 
 				if(activePlayers.size() == 1) {
 					p.balance += pot;
@@ -179,7 +185,7 @@ public class Omaha {
 					p.fold(dealer);
 				}
 				// Case 2: eligible
-				else {					
+				else {
 					int turnResult = p.takeTurn(dealer, bet, availableCommunityCards);
 					// Player checks cards and checks, raises, or folds
 					switch(turnResult) {
@@ -290,6 +296,7 @@ public class Omaha {
 			}
 		}
 
+		winner.balance += pot;
 		Omaha.gui.gamePanel.showWin(winner.name + " wins the hand");
 	}
 
@@ -354,24 +361,24 @@ public class Omaha {
 	// Brute forced combo builder. Found algorithms to perform combinations, too much to implement
 	// Same complexity, just more handwritten code
 	private static void buildCombinations(Player p, Card[][] allHands) {
-		for(int i = 0; i < 60; i += 6) {
+		for(int i = 0; i < 10; i++) {
 			allHands[i][0] = p.hand[0];
 			allHands[i][1] = p.hand[1];
 
-			allHands[i + 1][0] = p.hand[0];
-			allHands[i + 1][1] = p.hand[2];
+			allHands[i + 10][0] = p.hand[0];
+			allHands[i + 10][1] = p.hand[2];
 
-			allHands[i + 2][0] = p.hand[0];
-			allHands[i + 2][1] = p.hand[3];
+			allHands[i + 20][0] = p.hand[0];
+			allHands[i + 20][1] = p.hand[3];
 
-			allHands[i + 3][0] = p.hand[1];
-			allHands[i + 3][1] = p.hand[2];
+			allHands[i + 30][0] = p.hand[1];
+			allHands[i + 30][1] = p.hand[2];
 
-			allHands[i + 4][0] = p.hand[1];
-			allHands[i + 4][1] = p.hand[3];
+			allHands[i + 40][0] = p.hand[1];
+			allHands[i + 40][1] = p.hand[3];
 
-			allHands[i + 5][0] = p.hand[2];
-			allHands[i + 5][1] = p.hand[3];
+			allHands[i + 50][0] = p.hand[2];
+			allHands[i + 50][1] = p.hand[3];
 		}
 
 		for(int i = 0; i < 60; i += 10) {
