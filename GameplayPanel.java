@@ -1,3 +1,6 @@
+// Cody Ickes
+// Project
+
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.event.ComponentListener;
@@ -19,8 +22,8 @@ import java.awt.Component;
 
 public class GameplayPanel extends JPanel {
 	// Grid layout to create a cell for each player (up to 10)
-	private JPanel aboveTable = new JPanel(new GridLayout(1, 5));
-	private JPanel belowTable = new JPanel(new GridLayout(1, 5));
+	private JPanel aboveTable = new JPanel(new GridLayout(1, 3));
+	private JPanel belowTable = new JPanel(new GridLayout(1, 3));
 	private ImageIcon table;
 	private List<Player> playerList = new LinkedList<>();
 	private JPanel community = new JPanel(new GridLayout(1, 5));
@@ -168,11 +171,23 @@ public class GameplayPanel extends JPanel {
 		return buttonChoice;
 	}
 
+	private boolean isNumeric(String amount) {
+		try {
+			int x = Integer.parseInt(amount);
+		}
+		catch(NumberFormatException e) {
+			return false;
+		}
+
+		return true;
+	}
+
 	public int getRaiseAmt() {
 		String amt = JOptionPane.showInputDialog("Raise Amount");
 
-		if(amt != null)
+		if(amt != null && isNumeric(amt))
 			return Integer.parseInt(amt);
+
 		return -1;
 	}
 
@@ -220,7 +235,7 @@ public class GameplayPanel extends JPanel {
 		for(Iterator<Player> i = playerList.iterator(); i.hasNext();) {
 			Player p = i.next();
 			// PlayerPanel created and placed in respective cell
-			if(loopCount < 5)
+			if(loopCount < 3)
 				aboveTable.add(new PlayerPanel(p));
 			else
 				belowTable.add(new PlayerPanel(p));

@@ -1,9 +1,13 @@
+// Cody Ickes
+// Project
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.GridLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.JFormattedTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -11,22 +15,44 @@ import javax.swing.JOptionPane;
 import java.awt.CardLayout;
 import javax.swing.JDialog;
 import java.awt.Color;
+import java.text.NumberFormat;
+import javax.swing.text.NumberFormatter;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class GameFrame extends JFrame {
 
-	private GridLayout layout = new GridLayout(12, 2);
+	private GridLayout layout = new GridLayout(8, 2);
 	private JPanel infoInputPanel;
 	private JButton resetButton, startButton;
-	private JTextField[] nameInputArray = new JTextField[10];
-	private JTextField[] balanceInputArray = new JTextField[10];
+	private JTextField[] nameInputArray = new JTextField[6];
+	private JFormattedTextField[] balanceInputArray = new JFormattedTextField[6];
 	private int numberOfPlayers = 2;
 	protected GameplayPanel gamePanel;
 	private JDialog setupDialog;
+	private NumberFormat format;
+	private NumberFormatter formatter;
 
 	public GameFrame() {
 		super("Omaha Poker");
 
 		setupDialog = new JDialog(this, true);
+		// End program if you close dialog
+		setupDialog.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				System.exit(0);
+			}
+		});
+
+		// Formatter to only accept integer from https://stackoverflow.com/questions/11093326/restricting-jtextfield-input-to-integers
+		format = NumberFormat.getInstance();
+		format.setGroupingUsed(false);
+    	formatter = new NumberFormatter(format);
+    	formatter.setValueClass(Integer.class);
+    	formatter.setMinimum(1);
+    	formatter.setMaximum(Integer.MAX_VALUE);
+    	formatter.setAllowsInvalid(true);
 
 		layout.setVgap(10);
 		// Create panel with 12x2 grid layout. Spaced 10 between each row
@@ -44,7 +70,7 @@ public class GameFrame extends JFrame {
 	// Displays GUI to collect data for game (# of players, balance, etc.)
 	public void setGameData() {
 		// Create dropdown to set # of players
-		Integer[] countSelection = {2, 3, 4, 5, 6, 7, 8, 9, 10};
+		Integer[] countSelection = {2, 3, 4, 5, 6};
 		JComboBox<Integer> playerCount = new JComboBox<>(countSelection);
 		// Action listener to retrieve selected number of players
 		playerCount.addActionListener(new ActionListener() {
@@ -56,7 +82,7 @@ public class GameFrame extends JFrame {
 		infoInputPanel.add(new JLabel("How many players?"));
 		infoInputPanel.add(playerCount);
 
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < 6; i++) {
 			infoInputPanel.add(new JLabel("Player " + (i + 1)));
 			infoInputPanel.add(new PlayerDataPanel(i));
 		}
@@ -87,7 +113,7 @@ public class GameFrame extends JFrame {
 	// JPanel used inside of cell of grid layout
 	private class PlayerDataPanel extends JPanel {
 		JTextField nameInput = new JTextField();
-		JTextField balanceInput = new JTextField();
+		JFormattedTextField balanceInput = new JFormattedTextField(formatter);
 
 		// Takes in loop iteration for saving input fields to array
 		PlayerDataPanel(int loopIteration) {
@@ -104,7 +130,7 @@ public class GameFrame extends JFrame {
 
 	// Clears data entered into form
 	private void clearForm() {
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < 6; i++) {
 			nameInputArray[i].setText("");
 			balanceInputArray[i].setText("");
 		}

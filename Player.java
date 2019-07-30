@@ -1,3 +1,6 @@
+// Cody Ickes
+// Project
+
 import java.util.Scanner;
 
 public class Player {

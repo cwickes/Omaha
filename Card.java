@@ -1,3 +1,6 @@
+// Cody Ickes
+// Project
+
 public class Card {
 
 	protected Rank rank;

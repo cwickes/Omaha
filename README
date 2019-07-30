@@ -1,3 +1,31 @@
 Card and chip assets from https://opengameart.org/content/playing-card-assets-52-cards-deck-chips
 Poker table asset from https://www.behance.net/gallery/48265285/Poker-Assets
 
+Rules can be found at https://www.pokerlistings.com/poker-rules-omaha
+
+The current player is marked with a green background. Once the hand is visible, a dialog
+will appear with an option to raise, call, or fold. If raise is clicked, a new dialog will
+appear with a text input to enter the desired amount to raise by. If the input is invalid
+or is less than or equal to the call amount, then a call is performed instead. During a turn
+there is a button that will quit the game.
+
+Game setup allows you to select the number of players. If the name and balance fields for
+players 1 to n (where n is the number of selected players) are missing info, a dialog
+appears and will not allow to start the game until enough of the field are filled out.
+Balance field will only accept positive integer values.
+
+Game implements small blinds and big blinds. Blinds are designated in logic, but are
+not visible in UI. Using blinds, players automatically bet $5 and $10 for the small and
+big blind, respectively. Round starts with small blind bet, then big blind bet, then the
+player after the big blind will start the turn. After round, dealer and blinds are shifted
+to the right.
+
+Note: Code is not as clean as it could be. Too little time to refactor it all. Found out
+the hard way that logic should be built in an event-driven approach. Big problem ran into
+was GUI not updating due to running logic on the AWT thread. That is where I realized to
+make GUI calls from the logic, not logic from GUI calls. A lot of time and effort put in
+at this realization, therefore the code is not as object-oriented as I would have liked.
+
+Note: Game allows for up to 10 players, however, only allowed up to 6 as the card images could
+not be resized. This would cause overlapping issues and make the window too large. 6 player game
+was tested on a 1080p screen with no issues, may be a concern on lower resolutions.
